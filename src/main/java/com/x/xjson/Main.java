@@ -6,8 +6,6 @@
  */
 package com.x.xjson;
 
-import java.util.UUID;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -173,7 +171,7 @@ public class Main {
 			}
 		});
 		btnNewButton.setBounds(694, 5, 80, 27);
-		btnNewButton.setText("请求");
+		btnNewButton.setText("go");
 		
 		txtPara = new Text(shell, SWT.BORDER | SWT.WRAP);
 		txtPara.setBounds(49, 36, 499, 96);
@@ -220,7 +218,7 @@ public class Main {
 				txtJson.setText(fotmatStr);
 			}
 		});
-		btnJson.setText("格式化");
+		btnJson.setText("format");
 		
 		Button button = new Button(composite, SWT.NONE);
 		button.setBounds(96, 10, 80, 19);
@@ -270,7 +268,7 @@ public class Main {
 		tree.setBounds(10, 10, 736, 417);
 		
 		TabItem tbtmNewItem_1 = new TabItem(tabFolder, SWT.NONE);
-		tbtmNewItem_1.setText("视图");
+		tbtmNewItem_1.setText("view");
 		
 		TabItem tbtmMd = new TabItem(tabFolder, SWT.NONE);
 		tbtmMd.setText("MD5");
