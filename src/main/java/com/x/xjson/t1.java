@@ -100,7 +100,7 @@ public class t1 {
         
         
         labelText = new Text(shell, SWT.BORDER);
-        //GridData gd_labelText = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1); 
+        //GridData gd_labelText = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
         GridData gd_labelText = new GridData(GridData.FILL_BOTH);
         gd_labelText.heightHint = 232;
         labelText.setLayoutData(gd_labelText);
