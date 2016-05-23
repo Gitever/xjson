@@ -37,7 +37,7 @@ public class Base64Util {
     
     public static void main(String[] args) {
 		String s = "{\"FUNC\":\"GetOrRefreshVisionList\",\"SERV_CENTER_ID\":\"F2\",\"VISIONROOMINFOID\":\"a683320f-9905-4714-9767-ab6a5137e113\"}";
-		s = encode(s);
+		s = encode(s); 
 		System.out.println(s);
 	}
 }

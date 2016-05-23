@@ -36,11 +36,8 @@ public class PropUtil {
             // 强制要求为属性的键和值使用字符串。返回值是 Hashtable 调用 put 的结果。   
             OutputStream fos = new FileOutputStream(filePath);
             String old = getValue(key);
-            if (old == null) {
-				old = "";
-			}else{
-				old = old.equals("null") ? "" : old;
-			}
+            if (old == null) old = "";
+				else old = old.equals("null") ? "" : old;
             
             props.setProperty(key, old + value);
             // 以适合使用 load 方法加载到 Properties 表中的格式，
