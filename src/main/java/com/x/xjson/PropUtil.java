@@ -27,7 +27,7 @@ public class PropUtil {
 	}
 	
 	public static String getValue(String key) {
-        return props.getProperty(key);
+        return props.getProperty(key); 
     }
 	
 	public static void updateProperties(String key,String value) {   
