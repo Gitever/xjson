@@ -1,8 +1,8 @@
 /**
  * 
- * File Name: a.java 
+ * File Name: f.java 
  * Package Name: com.x.xjson
- * Date: 2016年5月20日 上午11:16:42
+ * Date: 2016年5月23日 下午2:10:27
  */
 package com.x.xjson;
 
@@ -13,30 +13,24 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 /**
  * @author x
  *
  */
 public class Main {
-
 	protected Shell shell;
-	private Text txtURL;
 	private Text txtPara;
 	private Text txtJson;
 	private Text txtMDencode;
@@ -88,25 +82,45 @@ public class Main {
 		lblUrl.setBounds(10, 10, 33, 17);
 		lblUrl.setText("URL:");
 		
-		txtURL = new Text(shell, SWT.BORDER);
-		txtURL.setBounds(49, 7, 455, 23);
-		
 		Label lblPara = new Label(shell, SWT.NONE);
 		lblPara.setBounds(10, 33, 33, 17);
 		lblPara.setText("Data:");
+		
+		final Combo cmbURL = new Combo(shell, SWT.NONE);
+		cmbURL.setBounds(49, 10, 455, 25);
+		
+		String propUrl = PropUtil.getValue("url");
+		if (propUrl != null && !"".equals(propUrl)) {
+			String[] urls = propUrl.split(",");
+			cmbURL.setItems(urls);
+		}
+		cmbURL.addSelectionListener(new SelectionListener() {
+			
+			public void widgetSelected(SelectionEvent arg0) {
+				// dll 索引
+				int index = cmbURL.getSelectionIndex();
+				String propPara = PropUtil.getValue("param");
+				if (propPara != null && !"".equals(propPara)) {
+					txtPara.setText(Base64Util.decode(propPara.split("XXX")[index]));
+				}
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		Combo cmbCT = new Combo(shell, SWT.READ_ONLY);
 		cmbCT.setFont(SWTResourceManager.getFont("微软雅黑", 8, SWT.NORMAL));
 		cmbCT.setItems(new String[]{"application/x-www-form-urlencoded","multipart/form-data","application/json","text/xml","",""});
 		cmbCT.setBounds(647, 33, 127, 24);
-		//cmbCT.setText("application/json");
 		cmbCT.select(0);
 		
 		Combo cmbAccept = new Combo(shell, SWT.READ_ONLY);
 		cmbAccept.setFont(SWTResourceManager.getFont("微软雅黑", 8, SWT.NORMAL));
 		cmbAccept.setItems(new String[]{"application/x-www-form-urlencoded","text/html","text/xml","application/x-javascript","application/json"});
 		cmbAccept.setBounds(647, 64, 127, 25);
-		//cmbAccept.setText("application/json");
 		cmbAccept.select(0);
 		
 		Combo cmbType = new Combo(shell, SWT.READ_ONLY);
@@ -134,20 +148,24 @@ public class Main {
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String url = txtURL.getText();
+				String url = cmbURL.getText();
 				String para = txtPara.getText();
 				try {
 					//String respJson = new HttpAccessor().getResponseByPost(url, cmbCT.getText(), "utf-8", new String[]{"params", para});
 					
-					String respJson = new HttpAccessor().getPost0(url, para, "utf-8");
-					
-					txtJson.setText(respJson);
-					String fotmatStr = FormatJSON.format(txtJson.getText());
-					txtJson.setText(fotmatStr);
+					if (!"".equals(url) || !"".equals(para)) {
+						String respJson = new HttpAccessor().getPost0(url, para, "utf-8");
+						txtJson.setText(respJson);
+						String fotmatStr = FormatJSON.format(txtJson.getText());
+						txtJson.setText(fotmatStr);
+					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),"确认","确实要保退出吗？");
+				
+				PropUtil.updateProperties("url", url + ",");
+				PropUtil.updateProperties("param", Base64Util.encode(para) + "XXX");
+				MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),"确认", PropUtil.getValue("file"));
 			}
 		});
 		btnNewButton.setBounds(694, 5, 80, 27);
@@ -158,7 +176,7 @@ public class Main {
 		txtPara.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
+				
 			}
 			
 			public void keyPressed(KeyEvent e) {
@@ -221,14 +239,14 @@ public class Main {
 			}
 			
 			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
+				
 			}
 		});
 		
 		txtJson.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
+				
 			}
 			
 			public void keyPressed(KeyEvent e) {
@@ -265,7 +283,7 @@ public class Main {
 		txtMDencode.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
+
 			}
 			
 			public void keyPressed(KeyEvent e) {
@@ -316,7 +334,7 @@ public class Main {
 		txtBASEencode.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
+
 			}
 			
 			public void keyPressed(KeyEvent e) {
@@ -331,7 +349,7 @@ public class Main {
 		txtBASEdecode.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
+
 			}
 			
 			public void keyPressed(KeyEvent e) {

@@ -1,43 +1,46 @@
 package com.x.xjson;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Properties;
 
 public class PropUtil {
 	
-	public static String getValue(String propName){
-		Properties p = null;
-		try {
-			p = initProperties("mpi.properties");
-		} catch (IOException e) {
-			System.out.println("初始化配置文件失败");
-		}
-		String value = p.getProperty(propName);
-		return value;
+	private static String filePath = "mpi.properties";
+	private static Properties props = new Properties();
+	
+	private PropUtil() { 
+		
 	}
 
-	/**
-	 * 从给定的配置文件中查属性值
-	 * @param propName
-	 * 				待查属性key
-	 * @param propFileName
-	 * 				配置文件名
-	 * @return
-	 */
-	public static String getValue(String propName,String propFileName){
-		Properties p = null;
+	static{
 		try {
-			p = initProperties(propFileName);
+			props.load(new FileInputStream(filePath));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("初始化配置文件 "+propFileName+" 失败");
+			e.printStackTrace();
 		}
-		String value = p.getProperty(propName);
-		return value;
 	}
 	
-	public static Properties initProperties(String propFilePath) throws IOException{
-		Properties p = new Properties();
-		p.load(PropUtil.class.getClassLoader().getResourceAsStream(propFilePath));
-		return p;
-	}
+	public static String getValue(String key) {
+        return props.getProperty(key);
+    }
+	
+	public static void updateProperties(String keyname,String keyvalue) {   
+        try {
+            // 调用 Hashtable 的方法 put，使用 getProperty 方法提供并行性。   
+            // 强制要求为属性的键和值使用字符串。返回值是 Hashtable 调用 put 的结果。   
+            OutputStream fos = new FileOutputStream(filePath);              
+            props.setProperty(keyname, keyvalue);   
+            // 以适合使用 load 方法加载到 Properties 表中的格式，   
+            // 将此 Properties 表中的属性列表（键和元素对）写入输出流   
+            props.store(fos, "Update '" + keyname + "' value");   
+        } catch (IOException e) {   
+            System.err.println("属性文件更新错误");   
+        }   
+    }
 }

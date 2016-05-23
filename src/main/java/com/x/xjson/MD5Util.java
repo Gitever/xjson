@@ -18,6 +18,12 @@ public class MD5Util {
 		System.out.println(MD5Util.getMD5(s));		
 		System.out.println(MD5Util.generateMD5String(s));
 		System.out.println(MD5Util.string2MD5(s));
+		
+		String a = "内部账户";
+		int index = a.indexOf("-");
+		System.out.println(index);
+		
+		System.out.println(a.substring(index+1));
 	}
 	
 	public static String string2MD5(String inStr){  
