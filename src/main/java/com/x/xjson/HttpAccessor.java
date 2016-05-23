@@ -53,52 +53,8 @@ public class HttpAccessor {
 				arg0.close();
 			}
 		};
-		
-		/*ContentProducer cp = new ContentProducer(){
-            // 二进制流
-            public void writeTo(OutputStream outstream) throws IOException{
-                ObjectOutputStream oos = new ObjectOutputStream(outstream);
-                oos.writeObject(param);
-                oos.flush();
-                oos.close();
-            }
-        };*/
         return getPost1(url, new EntityTemplate(cp), charset);
 	}
-	
-	private static OutputStream doPost(String url, HttpEntity entity){  
-		CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost post = new HttpPost(url);
-        OutputStream os = null;
-        post.setEntity(entity);
-        try{
-            HttpResponse response = client.execute(post);
-            HttpEntity resEntity = response.getEntity();
-            InputStream inputStream = resEntity.getContent();
-  
-            if (resEntity != null){
-                os = new ByteArrayOutputStream();
-                int temp = 0;
-                while ((temp = inputStream.read()) != -1){
-                    os.write(temp);
-                }
-                os.flush();
-                os.close();
-                EntityUtils.consume(resEntity);
-                return os;  
-            }  
-        }
-        catch (Exception e){  
-        }  
-        finally{  
-            try {
-				client.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }  
-        return null;  
-    }
 	
 	public String getPost1(String url, HttpEntity entity, String charset) throws Exception{
 		String result = "";
@@ -155,20 +111,12 @@ public class HttpAccessor {
 		String result = "";
 	    httpGet = new HttpGet(url);
 	    CloseableHttpResponse response1 = httpClient.execute(httpGet);
-	    // The underlying HTTP connection is still held by the response object
-	    // to allow the response content to be streamed directly from the network socket.
-	    // In order to ensure correct deallocation of system resources
-	    // the user MUST either fully consume the response content  or abort request
-	    // execution by calling CloseableHttpResponse#close().
-
 	    try {
 	        System.out.println(response1.getStatusLine());
 	        HttpEntity resEntity = response1.getEntity();
 	        if(resEntity != null){  
                 result = EntityUtils.toString(resEntity, encode);  
             }
-	        // do something useful with the response body
-	        // and ensure it is fully consumed
 	        EntityUtils.consume(resEntity);
 	    } finally {
 	        response1.close();
