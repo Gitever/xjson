@@ -6,6 +6,8 @@
  */
 package com.x.xjson;
 
+import java.util.UUID;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -95,18 +97,18 @@ public class Main {
 			cmbURL.setItems(urls);
 		}
 		cmbURL.addSelectionListener(new SelectionListener() {
-			
 			public void widgetSelected(SelectionEvent arg0) {
 				// dll 索引
 				int index = cmbURL.getSelectionIndex();
-				String propPara = PropUtil.getValue("param");
-				if (propPara != null && !"".equals(propPara)) {
-					txtPara.setText(Base64Util.decode(propPara.split("XXX")[index]));
+				String propPara = PropUtil.getValue("param"+index);
+				txtPara.setText("");
+				
+				if (propPara!= null) {
+					txtPara.setText(Base64Util.decode(propPara));
 				}
 			}
 			
 			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -163,8 +165,10 @@ public class Main {
 					e1.printStackTrace();
 				}
 				
-				PropUtil.updateProperties("url", url + ",");
-				PropUtil.updateProperties("param", Base64Util.encode(para) + "XXX");
+				int index = cmbURL.getItems().length;
+				PropUtil.updateProperties("url", url + ",");				
+				PropUtil.updateProperties("param"+ (index <= 0 ? 0 : index), Base64Util.encode(para));
+				cmbURL.add(url, index);
 				MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),"确认", PropUtil.getValue("file"));
 			}
 		});

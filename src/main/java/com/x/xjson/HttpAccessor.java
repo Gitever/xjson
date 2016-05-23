@@ -44,8 +44,6 @@ public class HttpAccessor {
 	}
 	
 	public String getPost0(String url, final String param, final String charset) throws Exception{
-		System.out.println(param);
-		
 		ContentProducer cp = new ContentProducer() {
 			public void writeTo(OutputStream arg0) throws IOException {
 				arg0.write(param.getBytes(charset));
