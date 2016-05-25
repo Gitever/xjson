@@ -1,6 +1,7 @@
 package com.x.xjson;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FormatJSON {
 	public static void main(String[] args) {
@@ -12,11 +13,12 @@ public class FormatJSON {
 		System.out.println(fotmatStr);
 		// http://10.111.10.19:8080/xunie/my.sl?txtName=admin
 		
-		
-		JSONObject json = new JSONObject();  
+		ObjectMapper mapper = new ObjectMapper();  
+	    ObjectNode root1 = mapper.createObjectNode();
+	    
 		String value = "null";
-		json.put("key", value);
-		System.out.println(json);
+		root1.put("key", value);
+		System.out.println(root1);
 	}
 
 	public static String format(String jsonStr) {
