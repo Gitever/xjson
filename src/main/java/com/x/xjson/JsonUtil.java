@@ -8,13 +8,9 @@ package com.x.xjson;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -22,6 +18,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 /**
  * @author x
+ * Xstream
+ * jackson
  *
  */
 public class JsonUtil {
@@ -152,6 +150,22 @@ public class JsonUtil {
 	}
 	
 	/**
+	 * 将xml转为对象
+	 * @param xmlValue
+	 * @param cls
+	 * @return
+	 */
+	public static <T> T xmlToObj(String xmlValue, Class<T> cls){
+		XmlMapper xml = getXmlMapper();
+		try {
+			return xml.readValue(xmlValue, cls);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
 	 * 将对象转xml，写入path路径
 	 * xml处理时需要jackson-dataformat-xml、stax2-api
 	 * @param obj
@@ -165,13 +179,4 @@ public class JsonUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	/*public static Object xmlToObject(String xl, Class<?> cls){
-		try {
-			XmlMapper xml = getXmlMapper();
-			return xml.readValue(xl, cls);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
 }

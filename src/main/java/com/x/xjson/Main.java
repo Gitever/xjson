@@ -176,7 +176,6 @@ public class Main {
 		txtPara = new Text(shell, SWT.BORDER | SWT.WRAP);
 		txtPara.setBounds(49, 36, 499, 96);
 		txtPara.addKeyListener(new KeyListener() {
-			
 			public void keyReleased(KeyEvent arg0) {
 				
 			}
@@ -245,8 +244,7 @@ public class Main {
 			}
 		});
 		
-		txtJson.addKeyListener(new KeyListener() {
-			
+		txtJson.addKeyListener(new KeyListener() {			
 			public void keyReleased(KeyEvent arg0) {
 				
 			}
