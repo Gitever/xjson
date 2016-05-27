@@ -43,7 +43,7 @@ public class HttpAccessor {
 		httpClient = HttpClients.createDefault();
 	}
 	
-	public String getPost0(String url, final String param, final String charset) throws Exception{
+	public String getResponseByPost(String url, final String param, final String charset){
 		ContentProducer cp = new ContentProducer() {
 			public void writeTo(OutputStream arg0) throws IOException {
 				arg0.write(param.getBytes(charset));
@@ -51,73 +51,49 @@ public class HttpAccessor {
 				arg0.close();
 			}
 		};
-        return getPost1(url, new EntityTemplate(cp), charset);
-	}
-	
-	public String getPost1(String url, HttpEntity entity, String charset) throws Exception{
-		String result = "";
+        
+        String result = "";
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		
 		HttpPost httpPost = new HttpPost(url);
-		httpPost.setEntity(entity);
-		HttpResponse response = httpclient.execute(httpPost);		
-		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-			HttpEntity resEntity = response.getEntity();
-			if (resEntity != null) {
-				InputStream inputStream = resEntity.getContent();
-				BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
-				
-				String readLine =null;
-				while((readLine = br.readLine()) !=null){
-					result = result + readLine;
-				}
-				inputStream.close();
-				br.close();
-				System.out.println("========="+result);
-			}
-		}
-		return result;
-	}
-	
-	public String getResponseByPost(String url, String ContentType, String encode,String[] params)throws Exception{
-		String result = null;
-		httpPost = new HttpPost(url); 
-		List<org.apache.http.NameValuePair> formParams = new ArrayList<org.apache.http.NameValuePair>();
-		for(int i=0; i<params.length/2;i++){
-			formParams.add(new BasicNameValuePair(params[i*2], params[i*2+1]));
-		}
-		
-		HttpEntity entityForm = new UrlEncodedFormEntity(formParams, encode);
-		httpPost.setHeader("Content-Type", ContentType);
-		httpPost.setEntity(entityForm);
-		CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+		httpPost.setEntity(new EntityTemplate(cp));
 		try {
-			if (httpResponse!=null) {
-				HttpEntity resEntity = httpResponse.getEntity();
-	            if(resEntity != null){
-	                result = EntityUtils.toString(resEntity, encode);  
-	            }
+			HttpResponse response = httpclient.execute(httpPost);		
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				HttpEntity resEntity = response.getEntity();
+				if (resEntity != null) {
+					InputStream inputStream = resEntity.getContent();
+					BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
+					
+					String readLine =null;
+					while((readLine = br.readLine()) !=null){
+						result = result + readLine;
+					}
+					inputStream.close();
+					br.close();
+					System.out.println("========="+result);
+				}
 			}
-		}finally {
-			httpResponse.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
 		return result;
 	}
 	
-	public String getResponseByGet(String url, String encode)throws Exception{
+	public String getResponseByGet(String url, String encode){
 		String result = "";
 	    httpGet = new HttpGet(url);
-	    CloseableHttpResponse response1 = httpClient.execute(httpGet);
+	    CloseableHttpResponse response = null;
 	    try {
-	        System.out.println(response1.getStatusLine());
-	        HttpEntity resEntity = response1.getEntity();
+	        response = httpClient.execute(httpGet);
+	        HttpEntity resEntity = response.getEntity();
 	        if(resEntity != null){  
                 result = EntityUtils.toString(resEntity, encode);  
             }
 	        EntityUtils.consume(resEntity);
-	    } finally {
-	        response1.close();
+	        response.close();
+	    }catch (Exception e){
+	    	e.printStackTrace();
 	    }
 	    return result;
 	}

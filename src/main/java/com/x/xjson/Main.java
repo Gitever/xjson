@@ -6,7 +6,10 @@
  */
 package com.x.xjson;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import java.awt.Toolkit;
+
+import javax.swing.JOptionPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -37,6 +40,7 @@ public class Main {
 	private Text txtMDdecode;
 	private Text txtBASEencode;
 	private Text txtBASEdecode;
+	private static String UTF8 = "utf-8";
 
 	/**
 	 * Launch the application.
@@ -76,7 +80,21 @@ public class Main {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setSize(800, 650);
-		shell.setText("SWT Application");
+		shell.setText("SWT");
+		
+		// 得到屏幕的宽度和高度 
+        int  screenHeight  =  Toolkit.getDefaultToolkit().getScreenSize().height;
+        int  screenWidth  =  Toolkit.getDefaultToolkit().getScreenSize().width;
+        // 得到Shell窗口的宽度和高度 
+        int  shellHeight  =  shell.getBounds().height;
+        int  shellWidth  =  shell.getBounds().width;
+        // 如果窗口大小超过屏幕大小，让窗口与屏幕等大 
+        if (shellHeight  >  screenHeight)
+                 shellHeight  =  screenHeight;
+        if (shellWidth  >  screenWidth)
+                shellWidth  =  screenWidth;
+       // 让窗口在屏幕中间显示 
+        shell.setLocation(( (screenWidth  -  shellWidth)  /   2 ),((screenHeight  -  shellHeight)  /   2 ) );
 		
 		Label lblUrl = new Label(shell, SWT.NONE);
 		lblUrl.setBounds(10, 10, 33, 17);
@@ -87,7 +105,7 @@ public class Main {
 		lblPara.setText("Data:");
 		
 		final Combo cmbURL = new Combo(shell, SWT.NONE);
-		cmbURL.setBounds(49, 10, 455, 25);
+		cmbURL.setBounds(49, 10, 499, 25);
 		
 		String propUrl = PropUtil.getValue("url");
 		if (propUrl != null && !"".equals(propUrl)) {
@@ -123,7 +141,7 @@ public class Main {
 		cmbAccept.setBounds(647, 64, 127, 25);
 		cmbAccept.select(0);
 		
-		Combo cmbType = new Combo(shell, SWT.READ_ONLY);
+		final Combo cmbType = new Combo(shell, SWT.READ_ONLY);
 		cmbType.setFont(SWTResourceManager.getFont("微软雅黑", 8, SWT.NORMAL));
 		cmbType.setItems(new String[] {"GET", "POST"});
 		cmbType.setBounds(647, 95, 127, 25);
@@ -150,24 +168,26 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				String url = cmbURL.getText();
 				String para = txtPara.getText();
-				try {
-					//String respJson = new HttpAccessor().getResponseByPost(url, cmbCT.getText(), "utf-8", new String[]{"params", para});
-					
-					if (!"".equals(url) || !"".equals(para)) {
-						String respJson = new HttpAccessor().getPost0(url, para, "utf-8");
-						txtJson.setText(respJson);
-						String fotmatStr = FormatJSON.format(txtJson.getText());
-						txtJson.setText(fotmatStr);
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
+				String respJson = null;
+				if ("".equals(url)) {
+					JOptionPane.showMessageDialog(null, "请求啥呢");
+					return;
 				}
+				
+				if (cmbType.getSelectionIndex() == 0) { // get
+					respJson = new HttpAccessor().getResponseByGet(url, UTF8);
+				}else{ // post
+					respJson = new HttpAccessor().getResponseByPost(url, para, UTF8);
+				}
+				
+				txtJson.setText(respJson);
+				String fotmatStr = FormatJSON.format(txtJson.getText());
+				txtJson.setText(fotmatStr);
 				
 				int index = cmbURL.getItems().length;
 				PropUtil.updateProperties("url", url + ",");				
 				PropUtil.updateProperties("param"+ (index <= 0 ? 0 : index), Base64Util.encode(para));
 				cmbURL.add(url, index);
-				MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),"确认", PropUtil.getValue("file"));
 			}
 		});
 		btnNewButton.setBounds(694, 5, 80, 27);
@@ -233,9 +253,13 @@ public class Main {
 		ckBase.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				if(ckBase.getSelection()){
-					System.out.println("yes");
+					if (!"".equals(txtJson.getText())) {
+						txtJson.setText(Base64Util.encode(txtJson.getText()));
+					}
 				}else{
-					System.out.println("no");
+					if (!"".equals(txtJson.getText())) {
+						txtJson.setText(Base64Util.decode(txtJson.getText()));
+					}
 				}
 			}
 			
@@ -279,7 +303,7 @@ public class Main {
 		lblNewLabel_3.setText("原文：");
 		
 		txtMDencode = new Text(composite_2, SWT.BORDER | SWT.WRAP);
-		txtMDencode.setBounds(46, 7, 684, 207);
+		txtMDencode.setBounds(46, 7, 684, 240);
 		txtMDencode.addKeyListener(new KeyListener() {
 			
 			public void keyReleased(KeyEvent arg0) {
@@ -294,11 +318,11 @@ public class Main {
 		});
 		
 		Label label = new Label(composite_2, SWT.NONE);
-		label.setBounds(10, 271, 36, 17);
+		label.setBounds(10, 308, 36, 17);
 		label.setText("密文：");
 		
 		txtMDdecode = new Text(composite_2, SWT.BORDER);
-		txtMDdecode.setBounds(46, 255, 684, 51);
+		txtMDdecode.setBounds(46, 286, 684, 51);
 		txtMDdecode.setFont(SWTResourceManager.getFont("微软雅黑", 23, SWT.NORMAL));
 		
 		Button btnMDencode = new Button(composite_2, SWT.NONE);
@@ -312,7 +336,7 @@ public class Main {
 			}
 		});
 		btnMDencode.setToolTipText("没有密文库");
-		btnMDencode.setBounds(46, 222, 80, 27);
+		btnMDencode.setBounds(46, 253, 80, 27);
 		btnMDencode.setText("加密");
 		
 		TabItem tbtmBase = new TabItem(tabFolder, SWT.NONE);
@@ -369,7 +393,7 @@ public class Main {
 				}
 			}
 		});
-		btnBencode.setBounds(10, 182, 80, 27);
+		btnBencode.setBounds(52, 182, 80, 27);
 		btnBencode.setText("加密");
 		
 		Button btnBdecode = new Button(composite_3, SWT.NONE);
@@ -382,15 +406,10 @@ public class Main {
 				}
 			}
 		});
-		btnBdecode.setBounds(106, 182, 80, 27);
+		btnBdecode.setBounds(138, 182, 80, 27);
 		btnBdecode.setText("解密");
 		
 		TabItem tbtmAes = new TabItem(tabFolder, SWT.NONE);
 		tbtmAes.setText("AES");
-		
-		Button ckByte = new Button(shell, SWT.CHECK);
-		ckByte.setToolTipText("流传输");
-		ckByte.setBounds(510, 10, 49, 17);
-		ckByte.setText("Byte");
 	}
 }
