@@ -16,6 +16,7 @@ public class Base64Util {
 	public static String decode(String s) {  
 		if (s == null) return null;  
 		try { 
+			@SuppressWarnings("restriction")
 			byte[] b = new sun.misc.BASE64Decoder().decodeBuffer(s); 
 			return new String(b, "UTF-8");
 		} catch (Exception e) { 
@@ -24,10 +25,11 @@ public class Base64Util {
     }
 	
 	// 编码
-    public static String encode(String s){
+    @SuppressWarnings("restriction")
+	public static String encode(String s){
         if (s == null) return null;
         try {
-			//return new sun.misc.BASE64Encoder().encode(s.getBytes("UTF-8"));
+			//return new sun.misc.BASE64Encoder().encode(s.getBytes("UTF-8"));        	
         	s = new sun.misc.BASE64Encoder().encode(s.getBytes("UTF-8"));
         	return s.replaceAll("[\\s*\t\n\r]", "");
 		} catch (UnsupportedEncodingException e) {

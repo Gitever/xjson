@@ -41,6 +41,7 @@ public class Main {
 	private Text txtBASEencode;
 	private Text txtBASEdecode;
 	private static String UTF8 = "utf-8";
+	private Text text;
 
 	/**
 	 * Launch the application.
@@ -286,11 +287,47 @@ public class Main {
 		Composite composite_1 = new Composite(tabFolder, SWT.NONE);
 		tbtmNewItem.setControl(composite_1);
 		
-		Tree tree = new Tree(composite_1, SWT.BORDER);
-		tree.setBounds(10, 10, 736, 417);
+		Button btnXml = new Button(composite_1, SWT.NONE);
+		btnXml.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!"".equals(text.getText())) {
+					try {
+						String xml = XmlUtil.formatXML(text.getText());
+						text.setText(xml);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		});
+		btnXml.setText("format");
+		btnXml.setBounds(10, 10, 80, 19);
 		
-		TabItem tbtmNewItem_1 = new TabItem(tabFolder, SWT.NONE);
-		tbtmNewItem_1.setText("view");
+		text = new Text(composite_1, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		text.setFont(SWTResourceManager.getFont("Consolas", 11, SWT.NORMAL));
+		text.setBounds(10, 35, 736, 387);
+		text.addKeyListener(new KeyListener() {
+			
+			public void keyReleased(KeyEvent arg0) {
+
+			}
+			
+			public void keyPressed(KeyEvent e) {
+				if (e.stateMask == SWT.CTRL && e.keyCode == 'a') {
+					txtMDencode.selectAll();
+				}
+			}
+		});
+		
+		TabItem tbtmView = new TabItem(tabFolder, SWT.NONE);
+		tbtmView.setText("view");
+		
+		Composite composite_v = new Composite(tabFolder, SWT.NONE);
+		tbtmView.setControl(composite_v);
+		
+		Tree tree = new Tree(composite_v, SWT.BORDER);
+		tree.setBounds(10, 10, 736, 417);
 		
 		TabItem tbtmMd = new TabItem(tabFolder, SWT.NONE);
 		tbtmMd.setText("MD5");
