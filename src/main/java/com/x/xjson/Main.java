@@ -111,6 +111,16 @@ public class Main {
 		String propUrl = PropUtil.getValue("url");
 		if (propUrl != null && !"".equals(propUrl)) {
 			String[] urls = propUrl.split(",");
+			// 显示前20条
+			if (urls.length > 20) {
+				int num = 0;
+				String [] newUrls = new String[]{};
+				for (int i = urls.length-20; i < urls.length; i++) {
+					newUrls[num] = urls[i];
+					num++;
+				}
+				cmbURL.setItems(newUrls);
+			}
 			cmbURL.setItems(urls);
 		}
 		cmbURL.addSelectionListener(new SelectionListener() {
@@ -155,7 +165,7 @@ public class Main {
 		
 		Label lblNewLabel_1 = new Label(shell, SWT.NONE);
 		lblNewLabel_1.setAlignment(SWT.RIGHT);
-		lblNewLabel_1.setBounds(561, 67, 73, 22);
+		lblNewLabel_1.setBounds(593, 67, 41, 22);
 		lblNewLabel_1.setText("Accept");
 		
 		Label lblNewLabel_2 = new Label(shell, SWT.NONE);
@@ -340,6 +350,7 @@ public class Main {
 		lblNewLabel_3.setText("原文：");
 		
 		txtMDencode = new Text(composite_2, SWT.BORDER | SWT.WRAP);
+		txtMDencode.setFont(SWTResourceManager.getFont("微软雅黑", 11, SWT.NORMAL));
 		txtMDencode.setBounds(46, 7, 684, 240);
 		txtMDencode.addKeyListener(new KeyListener() {
 			
@@ -375,6 +386,20 @@ public class Main {
 		btnMDencode.setToolTipText("没有密文库");
 		btnMDencode.setBounds(46, 253, 80, 27);
 		btnMDencode.setText("加密");
+		
+		Button btnMDencode16 = new Button(composite_2, SWT.NONE);
+		btnMDencode16.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!"".equals(txtMDencode.getText())) {
+					String encode = MD5Util.getMD5(txtMDencode.getText()+"123456");
+					txtMDdecode.setText(encode);
+				}
+			}
+		});
+		btnMDencode16.setToolTipText("没有密文库");
+		btnMDencode16.setText("加密(123456)");
+		btnMDencode16.setBounds(147, 253, 80, 27);
 		
 		TabItem tbtmBase = new TabItem(tabFolder, SWT.NONE);
 		tbtmBase.setText("BASE64");
@@ -448,5 +473,16 @@ public class Main {
 		
 		TabItem tbtmAes = new TabItem(tabFolder, SWT.NONE);
 		tbtmAes.setText("AES");
+		
+		Button btnClear = new Button(shell, SWT.NONE);
+		btnClear.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				cmbURL.setText("");
+				txtPara.setText("");
+			}
+		});
+		btnClear.setBounds(554, 61, 33, 71);
+		btnClear.setText("清空");
 	}
 }

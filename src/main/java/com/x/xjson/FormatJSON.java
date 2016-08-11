@@ -22,7 +22,7 @@ public class FormatJSON {
 	}
 
 	public static String format(String jsonStr) {
-		jsonStr = jsonStr.replace(" ", "");
+		//jsonStr = jsonStr.replace(" ", "");
 		jsonStr = jsonStr.replace("\\\"", "\"");
 		jsonStr = jsonStr.replace("\\\\", "");
 		if (null == jsonStr || "".equals(jsonStr)) return "";
@@ -61,7 +61,10 @@ public class FormatJSON {
                     }
                     break;
                 case ':':
-                	sb.append(current + " ");
+            		if (last == '"') 
+            			sb.append(current + " ");
+					else
+						sb.append(current + "");
                 	break;
                 default:
                     sb.append(current);
