@@ -111,17 +111,18 @@ public class Main {
 		String propUrl = PropUtil.getValue("url");
 		if (propUrl != null && !"".equals(propUrl)) {
 			String[] urls = propUrl.split(",");
+			int number = urls.length; // 总长度
 			// 显示前20条
-			if (urls.length > 20) {
+			if (number > 20) {
 				int num = 0;
-				String [] newUrls = new String[]{};
-				for (int i = urls.length-20; i < urls.length; i++) {
+				String [] newUrls = new String[20];
+				for (int i = number-20; i < number; i++) {
 					newUrls[num] = urls[i];
 					num++;
 				}
 				cmbURL.setItems(newUrls);
-			}
-			cmbURL.setItems(urls);
+			}else
+				cmbURL.setItems(urls);
 		}
 		cmbURL.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent arg0) {
